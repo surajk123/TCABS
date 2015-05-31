@@ -1,0 +1,2902 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CPS</name>
+    </assembly>
+    <members>
+        <member name="T:CPS.Utils">
+            <summary>
+            Various utility functions, that can be usefull to user. All functions are static, so no need to create class.
+            </summary>
+        </member>
+        <member name="M:CPS.Utils.HtmlSpecialChars(System.String)">
+            <summary>
+            Encodes HTML/XML most important chars.
+            </summary>
+            <param name="input">String to encode.</param>
+            <returns>Encoded string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_Term(System.String,System.String,System.Boolean)">
+            <summary>
+            Escapes &lt;, &gt;, and &amp; characters in given term for inclusion into XML (like search query). Also wraps the term in XML tags if xpath is specified.
+            Note that this function does not escape @, $, " and other symbols, that are meaningfull in a search query. In you want to escape input that comes directly from user and that isn't supposed to contain any search operators at all, it's probably better to use <see cref="M:CPS.Utils.CPS_QueryTerm(System.String,System.String,System.String)"/> function.
+            </summary>
+            <param name="term">Term to be escaped.</param>
+            <param name="xpath">Optional term xpath.</param>
+            <param name="escape">Whether to escape term's XML.</param>
+            <returns>Escaped and wrapped term.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_QueryTerm(System.String,System.String,System.String)">
+            <summary>
+            Escapes &lt;, &gt;, &amp; characters as well as @"{}()=$~+[]* (search query operators) in the given term for inclusion into search query. Also wraps term in XML tags if xpath is specified.
+            </summary>
+            <param name="term">Term to be escaped.</param>
+            <param name="xpath">Optional term xpath.</param>
+            <param name="allowed_symbols">String of operator symbols user is allowed to use.</param>
+            <returns>Escaped and wrapped term.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_QueryDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Converts given query dictionary to query string.
+            </summary>
+            <param name="dict">Query in Dictionary&lt;string, Object&gt; form, where dictionary key is xpath and value is string or Dictionary&lt;string, Object&gt;.</param>
+            <returns>Query as string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_RelevanceOrdering(System.String)">
+            <summary>
+            Generates ordering string for sorting by relevance for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_NumericOrdering(System.String,System.String)">
+            <summary>
+            Generates ordering string for numeric ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="tag">Numeric's tag xpath.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_DateOrdering(System.String,System.String)">
+            <summary>
+            Generates ordering string for date ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="tag">Date's tag xpath.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_StringOrdering(System.String,System.String,System.String)">
+            <summary>
+            Generates ordering string for string ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="tag">Tag's xpath by which to perform ordering.</param>
+            <param name="lang">Language (collation) used for ordering, for example 'en'.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_GenericDistanceOrdering(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Generates ordering string for generic distance ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="type">Ordering type.</param>
+            <param name="array">Dictionary of xpaths and coordinates.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_LatLongDistanceOrdering(System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Generates ordering string for latitude/longitude (GPS) distance ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="array">Dictionary with xpaths and coordinates for center point. Dictionary must contain exactly two elements, latitude first and longitude second.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_PlaneDistanceOrdering(System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Generates ordering string for plain distance ordering for <see cref="M:CPS.CPS_SearchRequest.setOrdering(System.String)"/>.
+            </summary>
+            <param name="array">Dictionary for xpaths and coordinates for center point.</param>
+            <param name="ascdesc">Specifies 'ascending' or 'descending' order.</param>
+            <returns>Ordering string.</returns>
+        </member>
+        <member name="M:CPS.Utils.CPS_FloatString(System.String)">
+            <summary>
+            Converts string containing Windows float to string containing Unix float - fixes decimal seperator.
+            </summary>
+            <param name="value">String to convert.</param>
+            <returns>Converted string.</returns>
+        </member>
+        <member name="T:CPS.CPS_PRX_Operation">
+            <summary>
+            The CPS_PRX_Operation class represents a particular operation for the partial-xreplace command.
+            An operation consists of the xpath that identifies which nodes the operation should be performed on,
+            the type of operation and new content that should be used in the operation.
+            <seealso cref="T:CPS.CPS_PartialXRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_PRX_Operation.#ctor(System.String,System.String,System.Object)">
+            <summary>
+            Constructs an instance of the CPS_PRX_Operation class.
+            </summary>
+            <param name="xpath">XPath 1.0 expression denoting which nodes the operation should be performed on.</param>
+            <param name="operation">Type of the operation e.g. "append_children" or "remove".</param>
+            <param name="document">Content of the operation - required for anything except the remove operation. Can be specified using <see cref="T:CPS.CPS_SimpleXML"/>, <see cref="T:System.Xml.XmlElement"/> or <see cref="T:System.String"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_PRX_Operation.renderXML">
+            <summary>
+            Renders the resulting XML. Used for internal purposes and should not be used from API.
+            </summary>
+            <returns>Resulting XML as string.</returns>
+        </member>
+        <member name="F:CPS.CPS_PRX_Operation.p_xpath">
+            <summary>
+            Operation XPath.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_PRX_Operation.p_operation">
+            <summary>
+            Operation name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_PRX_Operation.p_document">
+            <summary>
+            Operation content document as <see cref="T:CPS.CPS_SimpleXML"/>, <see cref="T:System.Xml.XmlElement"/> or <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_PRX_Changeset">
+            <summary>
+            The CPS_PRX_Changeset class represents a changeset for the partial-xreplace command.
+            A changeset is one or more document IDs and one or more operations to be performed on documents with these IDs.
+            <seealso cref="T:CPS.CPS_PartialXRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_PRX_Changeset.#ctor(System.String,CPS.CPS_PRX_Operation)">
+            <summary>
+            Constructs an instance of the CPS_PRX_Changeset class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operation">Operation to perform as <see cref="T:CPS.CPS_PRX_Operation"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_PRX_Changeset.#ctor(System.Collections.Generic.List{System.String},CPS.CPS_PRX_Operation)">
+            <summary>
+            Constructs an instance of the CPS_PRX_Changeset class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operation">Operation to perform as <see cref="T:CPS.CPS_PRX_Operation"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_PRX_Changeset.#ctor(System.String,System.Collections.Generic.List{CPS.CPS_PRX_Operation})">
+            <summary>
+            Constructs an instance of the CPS_PRX_Changeset class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operations">List of operations to perform as <see cref="T:CPS.CPS_PRX_Operation"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_PRX_Changeset.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{CPS.CPS_PRX_Operation})">
+            <summary>
+            Constructs an instance of the CPS_PRX_Changeset class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operations">List of operations to perform as <see cref="T:CPS.CPS_PRX_Operation"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_PRX_Changeset.renderXML(System.Collections.Generic.List{System.String})">
+            <summary>
+            Renders the resulting XML. Used for internal purposes and should not be used from API.
+            </summary>
+            <param name="docIdXpath">Document ID XPath.</param>
+            <returns>Resulting XML as string.</returns>
+        </member>
+        <member name="F:CPS.CPS_PRX_Changeset.p_ids">
+            <summary>
+            List of document IDs.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_PRX_Changeset.p_operations">
+            <summary>
+            List of operations.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_PartialXRequest">
+            <summary>
+            Partial-XReplace command request class, wrapper for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_ModifyRequest">
+            <summary>
+            Generic modify command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Request">
+            <summary>
+            CPS Request class defines single request for CPS storage.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Request.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS Request class instance.
+            </summary>
+            <param name="command">API command for this request.</param>
+            <param name="requestId">Request ID to identify it in log files.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.getRequestXML(System.String,System.Collections.Generic.List{System.String},System.Collections.Generic.Dictionary{System.String,System.String},System.Boolean)">
+            <summary>
+            Converts current request to XML string.
+            </summary>
+            <param name="docRootXpath">Document root tag name.</param>
+            <param name="docIdXpath">Parsed document ID xpath.</param>
+            <param name="envelopeParams">Additional CPS envelope parameters.</param>
+            <param name="resetDocIds">Flag to reset document IDs.</param>
+            <returns>Request as XML string.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.getValidXmlValue(System.String)">
+            <summary>
+            Returns the string with control characters stripped.
+            </summary>
+            <param name="src">Source string.</param>
+            <returns>String with control characters stripped.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.getCommand">
+            <summary>
+            Gets current command.
+            </summary>
+            <returns>Command name.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.setParam(System.String,System.String)">
+            <summary>
+            Sets request parameter as single string value.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setParam(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Sets request parameter as multiple string values.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">List of parameter values.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setExtraXmlParam(System.String)">
+            <summary>
+            Sets extra XML to send in the content tag of the request. Only use this if you know what you are doing.
+            </summary>
+            <param name="value">Extra XML as a string.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.getRequestId">
+            <summary>
+            Gets current request ID.
+            </summary>
+            <returns>Request ID.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.setRequestId(System.String)">
+            <summary>
+            Sets current request ID.
+            </summary>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setClusterLabel(System.String)">
+            <summary>
+            Sets label for cluster nodeset.
+            </summary>
+            <param name="label">Label value.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.getClusterLabel">
+            <summary>
+            Gets label for cluster nodeset.
+            </summary>
+            <returns>Label value.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.getRequestType">
+            <summary>
+            Gets current request type.
+            </summary>
+            <returns>Request type.</returns>
+        </member>
+        <member name="M:CPS.CPS_Request.setRequestType(System.String)">
+            <summary>
+            Sets current request type. Do not do this unless 100% sure what you are doing!
+            </summary>
+            <param name="requestType">Request type.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setRawDocuments(System.Object)">
+            <summary>
+            Sets documents for this request.
+            Currently supported types are:
+            * Dictionary&lt;string, CPS_SimpleXML&gt;;
+            * Dictionary&lt;string, XmlElement&gt;;
+            * List&lt;string&gt;.
+            </summary>
+            <param name="documents">Documents.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setTextParam(System.String,System.String)">
+            <summary>
+            Sets text request parameter as single value.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setTextParam(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Sets text request parameter as multiple values.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">List of parameter values.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setRawParam(System.String,System.String)">
+            <summary>
+            Sets raw request parameter as single value.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="M:CPS.CPS_Request.setRawParam(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Sets raw request parameter as multiple values.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">List of parameter values.</param>
+        </member>
+        <member name="F:CPS.CPS_Request.p_command">
+            <summary>
+            Command name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_requestId">
+            <summary>
+            Request ID.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_requestType">
+            <summary>
+            Request type.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_textParams">
+            <summary>
+            Dictionary of text parameters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_rawParams">
+            <summary>
+            Dictionary of raw parameters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_documents">
+            <summary>
+            Request documents.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_requestDom">
+            <summary>
+            Request XML DOM object.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_changesets">
+            <summary>
+            List of changesets for partial-xreplace command.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_textParamNames">
+            <summary>
+            List of available text parameter names.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_rawParamNames">
+            <summary>
+            List of available raw parameter names.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_extraXmlParam">
+            <summary>
+            Extra XML parameter for request content.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Request.p_label">
+            <summary>
+            Label for cluster nodeset.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ModifyRequest.#ctor(System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_ModifyRequest class instance.
+            </summary>
+            <param name="command">Modify command name.</param>
+            <param name="documents">Documents, to modify. Can be of type Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_ModifyRequest.#ctor(System.String,System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_ModifyRequest class instance.
+            </summary>
+            <param name="command">Modify command name.</param>
+            <param name="id">Document ID.</param>
+            <param name="document">Document to modify. Can be of type CPS_SimpleXML or XmlElement.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(CPS.CPS_PRX_Changeset,System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="changeset"><see cref="T:CPS.CPS_PRX_Changeset"/> to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(System.Collections.Generic.List{CPS.CPS_PRX_Changeset},System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="changesets">List of <see cref="T:CPS.CPS_PRX_Changeset"/>s to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(System.String,CPS.CPS_PRX_Operation,System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operation">Operation as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(System.Collections.Generic.List{System.String},CPS.CPS_PRX_Operation,System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operation">Operation as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(System.String,System.Collections.Generic.List{CPS.CPS_PRX_Operation},System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operations">List of operations as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialXRequest.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{CPS.CPS_PRX_Operation},System.String)">
+            <summary>
+            Constructs an instance of the CPS_PartialXRequest class.
+            <seealso cref="T:CPS.CPS_PRX_Operation"/>
+            <seealso cref="T:CPS.CPS_PRX_Changeset"/>
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operations">List of operations as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_EmptyResponse">
+            <summary>
+            CPS_EmptyResponse is used in cases where no reply from the server is expected.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Response">
+            <summary>
+            CPS Response class contains single response from CPS storage.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Response.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new instance of CPS Response class.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_Response.#ctor(CPS.CPS_Connection,CPS.CPS_Request)">
+            <summary>
+            Creates new empty instance of CPS Response class without parsing response XML.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+        </member>
+        <member name="M:CPS.CPS_Response.getRawDocuments(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Gets documents from response, returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getRawFacets">
+            <summary>
+            Gets raw facets.
+            </summary>
+            <returns>Dictionary with facets.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getRawAggregate(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Gets aggregate data from response, returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, List&lt;CPS_SimpleXML&gt;&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, List&gt;XmlElement&gt;&gt;.
+            </summary>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Aggregate data as Dictionary&lt;string, List&lt;CPS_SimpleXML&gt;&gt; or Dictionary&lt;string, List&lt;XmlElement&gt;&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getRawWords">
+            <summary>
+            Returns word information for 'alternatives' and 'list-words' commands.
+            </summary>
+            <returns>Word information.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getRawWordCounts">
+            <summary>
+            Returns word counts for 'alternatives' command.
+            </summary>
+            <returns>Dictionary&lt;string, int&gt; with words and count pairs.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getParam(System.String)">
+            <summary>
+            Gets response parameter value.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <returns>Parameter value.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getParamInt(System.String)">
+            <summary>
+            Gets response parameter value ar integer.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <returns>Parameter value as integer.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getSeconds">
+            <summary>
+            Gets CPS storage processing time for this response.
+            </summary>
+            <returns>Seconds.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getContentArray(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Gets response content for simple commands, like 'status', returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns CPS_SimpleXML.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns XmlElement.
+            </summary>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Content as CPS_SimpleXML or XmlElement.</returns>
+        </member>
+        <member name="M:CPS.CPS_Response.getErrors">
+            <summary>
+            Gets response errors.
+            </summary>
+            <returns>List of errors.</returns>
+        </member>
+        <member name="F:CPS.CPS_Response.p_simpleXml">
+            <summary>
+            Response XML DOM object.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_storageName">
+            <summary>
+            Storage name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_command">
+            <summary>
+            Command name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_seconds">
+            <summary>
+            Response processing time in seconds.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_errors">
+            <summary>
+            List of errors
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_documents">
+            <summary>
+            Response documents.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_facets">
+            <summary>
+            Response facets.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_textParams">
+            <summary>
+            Response text parameters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_words">
+            <summary>
+            Response word information.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_wordCounts">
+            <summary>
+            Response word counts.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_contentArray">
+            <summary>
+            Response content, not an array, naming is simply the same as for PHP API.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_connection">
+            <summary>
+            Connection object.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_textParamNames">
+            <summary>
+            List of available response text parameter names.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_aggregate">
+            <summary>
+            Aggregate data.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.p_transactionId">
+            <summary>
+            Transaction ID, that is extracted from response. This differs from PHP API, because of .NET limitations.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Response.getTransactionId">
+            <summary>
+            Gets transaction ID from response. This differs from PHP API, because of .NET limitations.
+            </summary>
+            <returns>Transaction ID.</returns>
+        </member>
+        <member name="T:CPS.CPS_Response.DOC_TYPE">
+            <summary>
+            Available return document types.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.DOC_TYPE.DOC_TYPE_SIMPLEXML">
+            <summary>
+            PHP's simpleXML-like <see cref="T:CPS.CPS_SimpleXML"/> class.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.DOC_TYPE.DOC_TYPE_ARRAY">
+            <summary>
+            Array, not supported yet.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Response.DOC_TYPE.DOC_TYPE_STDCLASS">
+            <summary>
+            .NET native XML object - <see cref="T:System.Xml.XmlElement"/>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_EmptyResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request)">
+            <summary>
+            Creates new CPS_EmptyResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+        </member>
+        <member name="T:CPS.CPS_StatusRequest">
+            <summary>
+            Status command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_StatusResponse"/>.
+            <seealso cref="T:CPS.CPS_StatusResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_StatusRequest.#ctor(System.String)">
+            <summary>
+            Creates new CPS_StatusRequest class instance.
+            </summary>
+            <param name="requestId">Specifies request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_StatusResponse">
+            <summary>
+            Status command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_StatusRequest"/>.
+            <seealso cref="T:CPS.CPS_StatusRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_StatusResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_StatusResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_StatusResponse.getStatus">
+            <summary>
+            Returns status response content as CPS_SimpleXML object.
+            </summary>
+            <returns>Status content.</returns>
+        </member>
+        <member name="T:CPS.CPS_SearchRequest">
+            <summary>
+            Search command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_SearchResponse"/>.
+            <seealso cref="T:CPS.CPS_SearchResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.#ctor(System.String,System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Creates new CPS_SearchRequest class instance.
+            </summary>
+            <param name="query">Search query string. See <see cref="M:CPS.CPS_SearchRequest.setQuery(System.String)"/> for more info.</param>
+            <param name="offset">Defines number of document to skip before including in search results.</param>
+            <param name="docs">Defines number of documents to return.</param>
+            <param name="list">Dictionary with keys as xpaths and values as listing options (yes | no | snippet | highlight).</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setQuery(System.String)">
+            <summary>
+            Sets search query. Use can use <see cref="T:CPS.Utils"/> class functions for generating query.
+            <example>
+            This example show how to use <see cref="T:CPS.Utils"/> function to generate search query.
+            <code>
+            r.setQuery("(" + Utils.CPS_Term("predefined_term", "generated_fields/some_field") + Utils.CPS_Term(user_supplied_term, "searchable_fields/text") + ")");
+            </code>
+            </example>
+            </summary>
+            <param name="value">Query string. Please note, that all &lt;, &gt;, and &amp; characters, that are not supposed to be XML tags, must be escaped using <see cref="M:CPS.Utils.CPS_Term(System.String,System.String,System.Boolean)"/>, <see cref="M:CPS.Utils.CPS_QueryTerm(System.String,System.String,System.String)"/> or <see cref="M:CPS.Utils.HtmlSpecialChars(System.String)"/>.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setQuery(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Sets search query. Query should be in Dictionary&lt;string, Object&gt; form where Object is string or Dictionary&lt;string, Object&gt;.
+            </summary>
+            <param name="value">Query dictionary.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setDocs(System.Int32)">
+            <summary>
+            Sets returned document count.
+            </summary>
+            <param name="value">Document count.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setOffset(System.Int32)">
+            <summary>
+            Sets returned document offset (documents to skip, before including them in response).
+            </summary>
+            <param name="value">Document offset.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setFacet(System.String)">
+            <summary>
+            Sets single facet path.
+            </summary>
+            <param name="value">Facet path.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setFacet(System.Collections.Generic.List{System.String})">
+            <summary>
+            Sets multiple facet paths.
+            </summary>
+            <param name="value">List of facet paths.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setStemLang(System.String)">
+            <summary>
+            Sets stemming language.
+            </summary>
+            <param name="value">Stemming language code.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setExactMatch(System.String)">
+            <summary>
+            Sets exatch matching.
+            </summary>
+            <param name="value">Exatch match rule.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setGroup(System.String,System.Int32)">
+            <summary>
+            Sets grouping option.
+            </summary>
+            <param name="tagName">Tag name for grouping.</param>
+            <param name="count">Maximum number of document to return per group.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setList(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Sets list option.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setOrdering(System.String)">
+            <summary>
+            Sets single ordering rule. You can use <see cref="T:CPS.Utils"/> class function to generate this rule.
+            </summary>
+            <param name="order">Ordering rule.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setOrdering(System.Collections.Generic.List{System.String})">
+            <summary>
+            Sets multiple ordering rules. You can use <see cref="T:CPS.Utils"/> class function to generate these rules.
+            </summary>
+            <param name="order">List of ordering rules.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setAggregate(System.String)">
+            <summary>
+            Defines aggregation queries for the search request.
+            </summary>
+            <param name="aggregate">Single aggregation query.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchRequest.setAggregate(System.Collections.Generic.List{System.String})">
+            <summary>
+            Defines aggregation queries for the search request.
+            </summary>
+            <param name="aggregate">List of aggregation queries.</param>
+        </member>
+        <member name="T:CPS.CPS_SQLSearchRequest">
+            <summary>
+            The CPS_SQLSearchRequest class is virtually identical to the <see cref="T:CPS.CPS_SearchRequest"/> class, but is used for querying the database through the Basic SQL interface.
+            Corresponding response class is <see cref="T:CPS.CPS_SearchResponse"/>.
+            <seealso cref="T:CPS.CPS_SearchResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SQLSearchRequest.#ctor(System.String,System.String)">
+            <summary>
+            Constructs an instance of the CPS_SQLSearchRequest class.
+            </summary>
+            <param name="sql_query">SQL query.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_SearchResponse">
+            <summary>
+            Search command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request clases are <see cref="T:CPS.CPS_SearchRequest"/>, <see cref="T:CPS.CPS_SimilarDocumentRequest"/> and <see cref="T:CPS.CPS_SimilarTextRequest"/>.
+            <seealso cref="T:CPS.CPS_SearchRequest"/>
+            <seealso cref="T:CPS.CPS_SimilarDocumentRequest"/>
+            <seealso cref="T:CPS.CPS_SimilarTextRequest"/>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_SearchResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getDocuments(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Gets documents from response, returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="type">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getFacets">
+            <summary>
+            Gets returned facets.
+            </summary>
+            <returns>Dictionary of facets.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getAggregate(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Returns aggregated data from the response, returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, List&lt;CPS_SimpleXML&gt;&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, List&gt;XmlElement&gt;&gt;.
+            </summary>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Aggregate data as Dictionary&lt;string, List&lt;CPS_SimpleXML&gt;&gt; or Dictionary&lt;string, List&lt;XmlElement&gt;&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getFound">
+            <summary>
+            Gets returned document count.
+            </summary>
+            <returns>Document count.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getHits">
+            <summary>
+            Gets total document count, that mathed search query.
+            </summary>
+            <returns>Document count.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getFrom">
+            <summary>
+            Gets returned documents starting offset (position).
+            </summary>
+            <returns>Starting offset.</returns>
+        </member>
+        <member name="M:CPS.CPS_SearchResponse.getTo">
+            <summary>
+            Gets returned documents ending offset (position).
+            </summary>
+            <returns>Ending offset.</returns>
+        </member>
+        <member name="T:CPS.CPS_ShowHistoryRequest">
+            <summary>
+            The CPS_ShowHistoryRequest class is a wrapper for the <see cref="T:CPS.CPS_Request"/> class for the show-history command.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ShowHistoryRequest.#ctor(System.String,System.Boolean,System.String)">
+            <summary>
+            Creates new CPS_ShowHistoryRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="returnDocs">Set this to true if you want historical document content returned as well.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_InsertRequest">
+            <summary>
+            Insert command request class, wrapper for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_InsertRequest.#ctor(System.Object,System.String)">
+            <summary>
+            Creates new CPS_InsertRequest class instance.
+            </summary>
+            <param name="documents">Documents, to modify. Can be of type Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_InsertRequest.#ctor(System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_InsertRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document to modify. Can be of type CPS_SimpleXML or XmlElement.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_UpdateRequest">
+            <summary>
+            Update command request class, wrapper for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_UpdateRequest.#ctor(System.Object,System.String)">
+            <summary>
+            Creates new CPS_UpdateRequest class instance.
+            </summary>
+            <param name="documents">Documents, to modify. Can be of type Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_UpdateRequest.#ctor(System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_Update request class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document to modify. Can be of type CPS_SimpleXML or XmlElement.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_ReplaceRequest">
+            <summary>
+            Replace command request class, wrapped for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ReplaceRequest.#ctor(System.Object,System.String)">
+            <summary>
+            Creates new CPS_ReplaceRequest class instance.
+            </summary>
+            <param name="documents">Documents, to modify. Can be of type Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_ReplaceRequest.#ctor(System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_ReplaceRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document to modify. Can be of type CPS_SimpleXML or XmlElement.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_PartialReplaceRequest">
+            <summary>
+            Partial-Replace command request class, wrapper for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_PartialReplaceRequest.#ctor(System.Object,System.String)">
+            <summary>
+            Creates new CPS_PartialReplaceRequest class instance.
+            </summary>
+            <param name="documents">Documents, to modify. Can be of type Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_PartialReplaceRequest.#ctor(System.String,System.Object,System.String)">
+            <summary>
+            Creates new CPS_PartialReplaceRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document to modify. Can be of type CPS_SimpleXML or XmlElement.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_DeleteRequest">
+            <summary>
+            Delete command request class, wrapper for <see cref="T:CPS.CPS_ModifyRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_ModifyResponse"/>.
+            <seealso cref="T:CPS.CPS_ModifyResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_DeleteRequest.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS_DeleteRequest class instance.
+            </summary>
+            <param name="id">Document ID to delete.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_DeleteRequest.#ctor(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Creates new CPS_DeleteRequest class instance.
+            </summary>
+            <param name="id">List of document IDs to delete.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_ModifyResponse">
+            <summary>
+            Generic modify command response, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request classes are <see cref="T:CPS.CPS_UpdateRequest"/>, <see cref="T:CPS.CPS_DeleteRequest"/>, <see cref="T:CPS.CPS_ReplaceRequest"/>, <see cref="T:CPS.CPS_PartialReplaceRequest"/> and <see cref="T:CPS.CPS_InsertRequest"/>.
+            <seealso cref="T:CPS.CPS_UpdateRequest"/>
+            <seealso cref="T:CPS.CPS_DeleteRequest"/>
+            <seealso cref="T:CPS.CPS_ReplaceRequest"/>
+            <seealso cref="T:CPS.CPS_PartialReplaceRequest"/>
+            <seealso cref="T:CPS.CPS_InsertRequest"/>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ModifyResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_ModifyResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_ModifyResponse.getModifiedIds">
+            <summary>
+            Gets modified document IDs.
+            </summary>
+            <returns>List od modified document IDs.</returns>
+        </member>
+        <member name="T:CPS.CPS_ListWordsRequest">
+            <summary>
+            List-Words command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_ListWordsResponse"/>.
+            <seealso cref="T:CPS.CPS_ListWordsResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListWordsRequest.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS_ListWordsRequest class instance.
+            </summary>
+            <param name="query">List-Words query.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_ListWordsRequest.setQuery(System.String)">
+            <summary>
+            Sets list-words query.
+            </summary>
+            <param name="value">List-Words query.</param>
+        </member>
+        <member name="T:CPS.CPS_ListWordsResponse">
+            <summary>
+            List-Words command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class if <see cref="T:CPS.CPS_ListWordsRequest"/>.
+            <seealso cref="T:CPS.CPS_ListWordsRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListWordsResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_ListWordsResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_ListWordsResponse.getWords">
+            <summary>
+            Gets listed word information.
+            </summary>
+            <returns>Dictionary of word information.</returns>
+        </member>
+        <member name="T:CPS.CPS_ListWordsResponse.WordInfo">
+            <summary>
+            Word information structure.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_ListWordsResponse.WordInfo.word">
+            <summary>
+            Word.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_ListWordsResponse.WordInfo.count">
+            <summary>
+            Number of times, word appears in storage.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_AlternativesRequest">
+            <summary>
+            Alternatives command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_AlternativesResponse"/>.
+            <seealso cref="T:CPS.CPS_AlternativesResponse"/>
+            <seealso href="http://www.clusterpoint.com/wiki/XML_Alternatives">Alternatives command description in Clusterpoint Wiki</seealso>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_AlternativesRequest.#ctor(System.String,System.Single,System.Single,System.Single,System.String)">
+            <summary>
+            Creates new CPS_AlternativesRequest class instance.
+            </summary>
+            <param name="query">Alternatives query.</param>
+            <param name="cr">Parameter 'cr'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <param name="idif">Parameter 'idif'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <param name="h">Parameter 'cr'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_AlternativesRequest.setQuery(System.String)">
+            <summary>
+            Sets alternatives query.
+            </summary>
+            <param name="value">Alternatives query.</param>
+        </member>
+        <member name="M:CPS.CPS_AlternativesRequest.setCr(System.Single)">
+            <summary>
+            Sets 'cr' parameter. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="M:CPS.CPS_AlternativesRequest.setIdif(System.Single)">
+            <summary>
+            Sets 'idif' parameter. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="M:CPS.CPS_AlternativesRequest.setH(System.Single)">
+            <summary>
+            Sets 'h' parameter. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="T:CPS.CPS_AlternativesResponse">
+            <summary>
+            Alternatives command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_AlternativesRequest"/>.
+            <seealso cref="T:CPS.CPS_AlternativesRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_AlternativesResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_AlternativesResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_AlternativesResponse.getWords">
+            <summary>
+            Gets alternatives word information.
+            </summary>
+            <returns>Dictionary of word information.</returns>
+        </member>
+        <member name="M:CPS.CPS_AlternativesResponse.getWordCount(System.String)">
+            <summary>
+            Gets given word counts.
+            </summary>
+            <param name="word">Word to get count for.</param>
+            <returns>Word count.</returns>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.p_localWords">
+            <summary>
+            Local word count cache.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_AlternativesResponse.WordInfo">
+            <summary>
+            Alternatives word information.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.WordInfo.word">
+            <summary>
+            Word.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.WordInfo.count">
+            <summary>
+            Number of times, word appears in storage.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.WordInfo.h">
+            <summary>
+            'h' value. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.WordInfo.idif">
+            <summary>
+            'idif' value. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_AlternativesResponse.WordInfo.cr">
+            <summary>
+            'cr' value. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_RetrieveRequest">
+            <summary>
+            Retrieve command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_RetrieveRequest.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS_RetrieveRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_RetrieveRequest.#ctor(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Creates new CPS_RetrieveRequest class instance.
+            </summary>
+            <param name="id">List of document IDs.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_LookupRequest">
+            <summary>
+            Lookup command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_LookupRequest.#ctor(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Creates new CPS_LookupRequest class instance.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_LookupRequest.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Creates new CPS_LookupRequest class instance.
+            </summary>
+            <param name="id">List of document IDs.</param>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_LookupRequest.setList(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Sets listing options.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+        </member>
+        <member name="T:CPS.CPS_LookupResponse">
+            <summary>
+            Lookup command response, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request classes are <see cref="T:CPS.CPS_RetrieveRequest"/>, <see cref="T:CPS.CPS_ListLastRequest"/>, <see cref="T:CPS.CPS_ListFirstRequest"/>, <see cref="T:CPS.CPS_RetrieveLastRequest"/>, <see cref="T:CPS.CPS_RetrieveFirstRequest"/> and <see cref="T:CPS.CPS_LookupRequest"/>.
+            <seealso cref="T:CPS.CPS_RetrieveRequest"/>
+            <seealso cref="T:CPS.CPS_ListLastRequest"/>
+            <seealso cref="T:CPS.CPS_ListFirstRequest"/>
+            <seealso cref="T:CPS.CPS_RetrieveLastRequest"/>
+            <seealso cref="T:CPS.CPS_RetrieveFirstRequest"/>
+            <seealso cref="T:CPS.CPS_LookupRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_LookupResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_LookupResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_LookupResponse.getDocuments(CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Gets returned documents.
+            </summary>
+            <param name="type">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_LookupResponse.getFound">
+            <summary>
+            Gets returned document count.
+            </summary>
+            <returns>Document count.</returns>
+        </member>
+        <member name="M:CPS.CPS_LookupResponse.getFrom">
+            <summary>
+            Gets returned documents starting offset (position).
+            </summary>
+            <returns>Starting offset.</returns>
+        </member>
+        <member name="M:CPS.CPS_LookupResponse.getTo">
+            <summary>
+            Gets returned documents ending offset (position).
+            </summary>
+            <returns>Ending offset.</returns>
+        </member>
+        <member name="T:CPS.CPS_ListLastRetrieveFirstRequest">
+            <summary>
+            Generic list-* and retrieve-* command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListLastRetrieveFirstRequest.#ctor(System.String,System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Creates new CPS_ListLastRetrieveFirst class instance.
+            </summary>
+            <param name="command">Command name.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_ListLastRetrieveFirstRequest.setList(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Sets listing option.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+        </member>
+        <member name="T:CPS.CPS_ListLastRequest">
+            <summary>
+            List-Last command request class, wrapper for <see cref="T:CPS.CPS_ListLastRetrieveFirstRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListLastRequest.#ctor(System.Collections.Generic.Dictionary{System.String,System.String},System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates new CPS_ListLastRequest class instance.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_ListFirstRequest">
+            <summary>
+            List-First command request class, wrapper for <see cref="T:CPS.CPS_ListLastRetrieveFirstRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListFirstRequest.#ctor(System.Collections.Generic.Dictionary{System.String,System.String},System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates new CPS_ListFirstRequest class instance.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_RetrieveLastRequest">
+            <summary>
+            Retrieve-Last command request class, wrapper for <see cref="T:CPS.CPS_ListLastRetrieveFirstRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_RetrieveLastRequest.#ctor(System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates new CPS_RetrieveLastRequest class instance.
+            </summary>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_RetrieveFirstRequest">
+            <summary>
+            Retrieve-First command request class, wrapper for <see cref="T:CPS.CPS_ListLastRetrieveFirstRequest"/> and <see cref="T:CPS.CPS_Request"/> classes.
+            Corresponding response class is <see cref="T:CPS.CPS_LookupResponse"/>.
+            <seealso cref="T:CPS.CPS_LookupResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_RetrieveFirstRequest.#ctor(System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates new CPS_RetrieveFirstRequest class instance.
+            </summary>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_SearchDeleteRequest">
+            <summary>
+            Search-Delete command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_SearchDeleteResponse"/>.
+            <seealso cref="T:CPS.CPS_SearchDeleteResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteRequest.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS_SearchDeleteRequest class instance.
+            </summary>
+            <param name="query">Search query. <see cref="M:CPS.CPS_SearchRequest.setQuery(System.String)"/> for more information.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteRequest.setQuery(System.String)">
+            <summary>
+            Sets search query.
+            </summary>
+            <param name="value">Search query.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteRequest.setStemLang(System.String)">
+            <summary>
+            Sets stemming language.
+            </summary>
+            <param name="value">Language code.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteRequest.setExactMatch(System.String)">
+            <summary>
+            Sets exatch matching option.
+            </summary>
+            <param name="value">Option value.</param>
+        </member>
+        <member name="T:CPS.CPS_SearchDeleteResponse">
+            <summary>
+            Search-Delete command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_SearchDeleteRequest"/>.
+            <seealso cref="T:CPS.CPS_SearchDeleteRequest"/>.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_SearchDeleteResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_SearchDeleteResponse.getHits">
+            <summary>
+            Returned number of document, that matched search query and were deleted.
+            </summary>
+            <returns>Number of documents.</returns>
+        </member>
+        <member name="T:CPS.CPS_ListPathsRequest">
+            <summary>
+            List-Paths command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_ListPathsResponse"/>.
+            <seealso cref="T:CPS.CPS_ListPathsResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListPathsRequest.#ctor(System.String)">
+            <summary>
+            Creates new CPS_ListPathsRequest class instance.
+            </summary>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_ListPathsResponse">
+            <summary>
+            List-Paths command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_ListPathsRequest"/>.
+            <seealso cref="T:CPS.CPS_ListPathsRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListPathsResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_ListPathsResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_ListPathsResponse.getPaths">
+            <summary>
+            Gets returned paths list.
+            </summary>
+            <returns>Paths list.</returns>
+        </member>
+        <member name="T:CPS.CPS_ListFacetsRequest">
+            <summary>
+            List-Facets command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding response class is <see cref="T:CPS.CPS_ListFacetsResponse"/>.
+            <seealso cref="T:CPS.CPS_ListFacetsResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListFacetsRequest.#ctor(System.String,System.String)">
+            <summary>
+            Creates new CPS_ListFacetsRequest class instance.
+            </summary>
+            <param name="path">Single path to list facets from.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="M:CPS.CPS_ListFacetsRequest.#ctor(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Creates new CPS_ListFacetsRequest class instance.
+            </summary>
+            <param name="paths">List of paths to list facets from.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_ListFacetsResponse">
+            <summary>
+            List-Facets command response class, wrapper for <see cref="T:CPS.CPS_Response"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_ListFacetsRequest"/>.
+            <seealso cref="T:CPS.CPS_ListFacetsRequest"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_ListFacetsResponse.#ctor(CPS.CPS_Connection,CPS.CPS_Request,System.String)">
+            <summary>
+            Creates new CPS_ListFacetsResponse class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+            <param name="request">CPS_Request class instance.</param>
+            <param name="responseXml">Raw response XML as string.</param>
+        </member>
+        <member name="M:CPS.CPS_ListFacetsResponse.getFacets">
+            <summary>
+            Gets returned facets.
+            </summary>
+            <returns>Dictionary of facets.</returns>
+        </member>
+        <member name="T:CPS.CPS_SimilarDocumentRequest">
+            <summary>
+            Similar command (by document ID) request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_SearchResponse"/>.
+            <see cref="T:CPS.CPS_SearchResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SimilarDocumentRequest.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Creates new CPS_SimilarDocumentRequest class instance.
+            </summary>
+            <param name="docid">Document ID to search similar documents to.</param>
+            <param name="len">Number of keywords to extract.</param>
+            <param name="quota">Minimum number of keywords to match.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="query">Additional filtering query.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_SimilarTextRequest">
+            <summary>
+            Similar command (by passed text) request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_SearchResponse"/>.
+            <see cref="T:CPS.CPS_SearchResponse"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SimilarTextRequest.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Creates new CPS_SimilarTextRequest class instance.
+            </summary>
+            <param name="text">Text to search similar documets to.</param>
+            <param name="len">Number of keywords to extract.</param>
+            <param name="quota">Minimum number of keywords to match.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="query">Additional filtering query.</param>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_BeginTransactionRequest">
+            <summary>
+            Begin-Transaction command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_Response"/>.
+            <see cref="T:CPS.CPS_Response"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_BeginTransactionRequest.#ctor(System.String)">
+            <summary>
+            Creates new CPS_BeginTransactionRequest class instance.
+            </summary>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_CommitTransactionRequest">
+            <summary>
+            Commit-Transaction command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_Response"/>.
+            <see cref="T:CPS.CPS_Response"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_CommitTransactionRequest.#ctor(System.String)">
+            <summary>
+            Creates new CPS_BeginTransactionRequest class instance.
+            </summary>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_RollbackTransactionRequest">
+            <summary>
+            Rollback-Transaction command request class, wrapper for <see cref="T:CPS.CPS_Request"/> class.
+            Corresponding request class is <see cref="T:CPS.CPS_Response"/>.
+            <see cref="T:CPS.CPS_Response"/>
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_RollbackTransactionRequest.#ctor(System.String)">
+            <summary>
+            Creates new CPS_BeginTransactionRequest class instance.
+            </summary>
+            <param name="requestId">Request ID.</param>
+        </member>
+        <member name="T:CPS.CPS_Exception">
+            <summary>
+            CPS Exception class, that can be thrown in various cases.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Exception.#ctor">
+            <summary>
+            Creates new CPS_Exception class instance.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Exception.#ctor(System.String)">
+            <summary>
+            Creates new CPS_Exception class instance.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:CPS.CPS_Exception.#ctor(System.String,System.Exception)">
+            <summary>
+            Creates new CPS_Exception class instance.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="inner">Another exception.</param>
+        </member>
+        <member name="M:CPS.CPS_Exception.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Creates new CPS_Exception class instance. Constructor not available for user.
+            </summary>
+            <param name="info">Serialization information.</param>
+            <param name="context">Streaming context.</param>
+        </member>
+        <member name="M:CPS.CPS_Exception.ToString">
+            <summary>
+            Converts CPS_Exception to string message.
+            </summary>
+            <returns>String message.</returns>
+        </member>
+        <member name="M:CPS.CPS_Exception.SetCode(CPS.CPS_Exception.ERROR_CODE)">
+            <summary>
+            Sets CPS_Exception error code
+            </summary>
+            <param name="code">Error code</param>
+            <returns>Self (CPS_Exception).</returns>
+        </member>
+        <member name="M:CPS.CPS_Exception.SetCode(System.Int32)">
+            <summary>
+            Sets CPS_Exception error code
+            </summary>
+            <param name="code">Error code</param>
+            <returns>Self (CPS_Exception)</returns>
+        </member>
+        <member name="F:CPS.CPS_Exception.p_code">
+            <summary>
+            Error code.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Exception.ERROR_CODE">
+            <summary>
+            Various error codes.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.OK">
+            <summary>
+            OK, no error - 0.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.INVALID_RESPONSE">
+            <summary>
+            Invalid response - 9001.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.INVALID_PARAMETER">
+            <summary>
+            Invalid parameter - 9002.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.INVALID_XPATHS">
+            <summary>
+            Invalid xpath(s) - 9003.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.INVALID_CONNECTION_STRING">
+            <summary>
+            Invalid connection string - 9004.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.PROTOBUF_ERROR">
+            <summary>
+            Protobuf-related error - 9005.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.SOCKET_ERROR">
+            <summary>
+            Socket-related error - 9006.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.TIMEOUT">
+            <summary>
+            Timeout - 9007.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.NO_WORKING_SERVERS">
+            <summary>
+            No working servers remaining - 9008.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Exception.ERROR_CODE.SSL_HANDSHAKE">
+            <summary>
+            SSL handshake error, that includes certificate validation - 9009.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Hasher">
+            <summary>
+            Hash wrapper for easy access to hashing methods.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Hasher.MD5(System.String)">
+            <summary>
+            MD5 hash.
+            </summary>
+            <param name="input">Data to hash.</param>
+            <returns>Hash string.</returns>
+        </member>
+        <member name="M:CPS.CPS_Hasher.SHA1(System.String)">
+            <summary>
+            SHA1 hash.
+            </summary>
+            <param name="input">Data to hash.</param>
+            <returns>Hash string</returns>
+        </member>
+        <member name="T:CPS.CPS_LoadBalancer">
+            <summary>
+            The load balancer class - connects to different nodes randomly unless one of the nodes is down.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.#ctor(System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String})">
+            <summary>
+            Constructs an instance of the Load Balancer class.
+            </summary>
+            <param name="connectionStrings">List of connection strings.</param>
+            <param name="storageNames">List of storage names corresponding to each of the connection strings.</param>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.setDebug(System.Boolean)">
+            <summary>
+            Sets the debugging mode.
+            </summary>
+            <param name="debugMode">Debugging mode.</param>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.newRequest(CPS.CPS_Request)">
+            <summary>
+            This is called by CPS_Connection whenever there is a new request to be sent. This method should not be used directly.
+            </summary>
+            <param name="request">The request before being rendered.</param>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.getConnectionString(System.String@)">
+            <summary>
+            This function is called by CPS_Connection before sending the request to find out where to send it to. This method should not be used directly.
+            </summary>
+            <param name="storageName">If request on different connections should be sent to different storage names, this parameter should be set before returning.</param>
+            <returns>Connection string as result and storageName by reference.</returns>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.logFailure">
+            <summary>
+            This function is called whenever there was a sending failure - an error received or an exception raised.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.logSuccess">
+            <summary>
+            This function is called whenever there was a sending success - no error received and no exception raised.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.shouldRetry(System.String,CPS.CPS_Exception)">
+            <summary>
+            This function should return whether a request should be retried depending on response.
+            </summary>
+            <param name="responseString">Raw response string.</param>
+            <param name="exception">Received exception.</param>
+            <returns>Boolean value showing if request should be retried.</returns>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.setExclusionTime(System.Int32)">
+            <summary>
+            This function defines how long should a node should be excluded from the list of valid nodes after a failure. Default is 30 seconds.
+            </summary>
+            <param name="seconds">Number of seconds that the node will be excluded for.</param>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.setStatusFilePrefix(System.String)">
+            <summary>
+            This function lets you set the prefix for status files. Default prefix is System.IO.Path.GetTempPath() + "cps-api-node-status-".
+            </summary>
+            <param name="prefix">New prefix.</param>
+        </member>
+        <member name="M:CPS.CPS_LoadBalancer.setSendWhenAllFailed(System.Boolean)">
+            <summary>
+            This function defines whether the request should be sent to one of the nodes anyway, when all the nodes in the list have failed.
+            </summary>
+            <param name="value">Boolean value.</param>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_connectionStrings">
+            <summary>
+            List of passed connection strings.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_storageNames">
+            <summary>
+            List of passed storage names.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_debug">
+            <summary>
+            Debug mode flag.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_usedConnections">
+            <summary>
+            List of used connection identifiers.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_numUsed">
+            <summary>
+            Count of used connections.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_lastReturnedIndex">
+            <summary>
+            Index of last returned connection.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_lastSuccess">
+            <summary>
+            Flag if last request was successfull.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_exclusionTime">
+            <summary>
+            Connection exclusion time in case of failure.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_statusFilePrefix">
+            <summary>
+            Status file prefix.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_sendWhenAllFailed">
+            <summary>
+            Flag to send request even when all connections have failed.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_retryRequests">
+            <summary>
+            Flag if requests should be retried.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_LoadBalancer.p_random">
+            <summary>
+            Random object.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Wildcard">
+            <summary>
+            Wildcard matching class.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Wildcard.Match(System.String,System.String)">
+            <summary>
+            Checks if given wildcard string matches given text.
+            </summary>
+            <param name="wildcard">Wildcard string.</param>
+            <param name="text">Given text.</param>
+            <returns>Matching result as boolean value.</returns>
+        </member>
+        <member name="T:CPS.CPS_Connection">
+            <summary>
+            CPS Connection class, that represents connection to CPS storage.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Connection.#ctor(System.Object,System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Creates new CPS Connection class instance. Note. Constructor does not connect to storage.
+            </summary>
+            <param name="connectionSpecification">Connection string (URL) or load balancing object. .NET API supports tcp://..., tcps://... and http://... protocols for connection strings.</param>
+            <param name="storageName">Storage new you want to connect to.</param>
+            <param name="username">Username for storage.</param>
+            <param name="password">Password for storage.</param>
+            <param name="documentRootXpath">Document root tag name, for example 'document'.</param>
+            <param name="documentIdXpath">Document ID xpath, for example '//document/id'.</param>
+            <param name="customEnvelopeParams">Additional request envelope parameters</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.setCustomSSLValidation(System.String,System.String)">
+            <summary>
+            Sets custom CA and Common Name for SSL certificate validation for cases when system validation fails.
+            </summary>
+            <param name="sslCustomCA">PEM file with server's CA certificate or null if CA should not be verified.</param>
+            <param name="sslCustomCN">String specifying server'a Common Name of null if Common Name should not be verified.</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.ConnectionServerValidationCallback(System.Object,System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509Chain,System.Net.Security.SslPolicyErrors)">
+            <summary>
+            Verifies the remote Secure Sockets Layer (SSL) certificate used for authentication.
+            </summary>
+            <param name="sender">An object that contains state information for this validation.</param>
+            <param name="certificate">The certificate used to authenticate the remote party.</param>
+            <param name="chain">The chain of certificate authorities associated with the remote certificate.</param>
+            <param name="sslPolicyErrors">One or more errors associated with the remote certificate.</param>
+            <returns>A Boolean value that determines whether the specified certificate is accepted for authentication.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.sendRequest(CPS.CPS_Request)">
+            <summary>
+            Sends request to Clusterpoint Server. Returned CPS_Response should be casted to command-specific response class.
+            </summary>
+            <param name="request">Request to send.</param>
+            <returns>Command-specific CPS_Response object instance.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.setApplicationId(System.String)">
+            <summary>
+            Sets new application ID or name to use in requests. This can be usefull to identify requests in log file.
+            </summary>
+            <param name="applicationId">Application ID or name.</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.setDebug(System.Boolean)">
+            <summary>
+            Enables or disables debug mode.
+            </summary>
+            <param name="debugMode">True or False to enable or disable debug mode.</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.setDocIdResetting(System.Boolean)">
+            <summary>
+            Enables or disables resetting document IDs when modifying. On by default. You should change this setting if You plan to insert documents with auto-incremented IDs or with IDs already integrated into the document.
+            </summary>
+            <param name="resetIds">True or False to enable or disable document IDs resetting.</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.setHMACKeys(System.String,System.String)">
+            <summary>
+            Sets HMAC keys used for this connection, this overrides username/password passed in constructor.
+            </summary>
+            <param name="userKey">User's key (or sometimes called public key), used for identifying user. This is transmitted over network.</param>
+            <param name="signKey">Signature key (or sometimes called private key), used for signing requests. This is NOT transmitted over network.</param>
+        </member>
+        <member name="M:CPS.CPS_Connection.renderRequest(CPS.CPS_Request)">
+            <summary>
+            Renders request XML for sending to storage.
+            </summary>
+            <param name="request">Request instance to render.</param>
+            <returns>XML request as string.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getDocumentRootXpath">
+            <summary>
+            Gets document root tag name.
+            </summary>
+            <returns>Tag name string.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getDocumentIdXpath">
+            <summary>
+            Gets parsed document ID xpath.
+            </summary>
+            <returns>List of strings with tag names.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getLastRequestDuration">
+            <summary>
+            Gets last request total duration in seconds.
+            </summary>
+            <returns>Duration in seconds as double.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getLastNetworkDuration">
+            <summary>
+            Gets last request network (request processing + request/response transmit time) duration in seconds, could be imprecise in case of HTTP connection.
+            </summary>
+            <returns>Duration in seconds as double.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getLastRequestSize">
+            <summary>
+            Gets last request size in UTF8 characters.
+            </summary>
+            <returns>Request UTF8 character count.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getLastResponseSize">
+            <summary>
+            Last response size in UTF8 characters.
+            </summary>
+            <returns>Response UTF8 character count.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.getLastConnectionInfo">
+            <summary>
+            Returns the info on where the last connection was made.
+            </summary>
+            <returns>Last connection string.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.clearTransactionId">
+            <summary>
+            Clears transaction context from connection object.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Connection.parseConnectionString(System.String)">
+            <summary>
+            Parses connection string to Uri class
+            </summary>
+            <param name="connstr">Connection string as string</param>
+            <returns>Connection string as Uri</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.CPS_Length2Header(System.Int32)">
+            <summary>
+            Generates byte array with CPS TCP header.
+            </summary>
+            <param name="length">Request length.</param>
+            <returns>Header as 8 byte array.</returns>
+        </member>
+        <member name="M:CPS.CPS_Connection.CPS_Header2Length(System.Byte[])">
+            <summary>
+            Extracts response length from received header.
+            </summary>
+            <param name="data">8 byte long header.</param>
+            <returns>Response length.</returns>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_connectionString">
+            <summary>
+            Connection string.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_connectionSwitcher">
+            <summary>
+            LoadBalancer object.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_storageName">
+            <summary>
+            Storage name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_username">
+            <summary>
+            User name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_password">
+            <summary>
+            Password.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_documentRootXpath">
+            <summary>
+            Document root tag name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_documentIdXpath">
+            <summary>
+            Parsed document ID xpath.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_applicationId">
+            <summary>
+            Application ID or name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_debug">
+            <summary>
+            Debug mode.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_docid_resetting">
+            <summary>
+            Flag for document ids resetting.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_lastRequestDuration">
+            <summary>
+            Last request total duration in seconds.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_lastNetworkDuration">
+            <summary>
+            Last request network (request processing + request/response transmit time) duration in seconds, could be imprecise in case of HTTP connection.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_lastRequestSize">
+            <summary>
+            Last request size in UTF8 characters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_lastResponseSize">
+            <summary>
+            Last response size in UTF8 characters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_hmacUserKey">
+            <summary>
+            User's key (or sometimes called public key), used for identifying user. This is transmitted over network.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_hmacSignKey">
+            <summary>
+            Signature key (or sometimes called private key), used for signing requests. This is NOT transmitted over network.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_transactionId">
+            <summary>
+            Transaction ID.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_customEnvelopeParams">
+            <summary>
+            Additional request envelope parameters.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_random">
+            <summary>
+            Random object.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_sslCustomCA">
+            <summary>
+            Specifies user-specified SSL CA used for connection certificate validation.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Connection.p_sslCustomCN">
+            <summary>
+            Specifies user-specified SSL Common Name for connection certification validation.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_StaticRequest">
+            <summary>
+            This class, which is derived from the CPS_Request class, can be used to send pre-formed XML requests to the storage.
+            If you already have the XML request, you can send it to the API by using this class. Note that parameters from the CPS_Connection
+            object such as storage name, username and password will not be used to form the request.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_StaticRequest.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Constructs an instance of the CPS_StaticRequest class.
+            </summary>
+            <param name="xml">Full XML string to send.</param>
+            <param name="command">Specifies which command is being sent. This is not mandatory for sending
+            the request per se, but how the response will be parsed will depend on this setting, so if you
+            want full response parsing from the API, you should specify the command here. Note that setting this
+            parameter will not change the XML being sent to the database</param>
+            <param name="requestId">Request ID to identify it in log files.</param>
+        </member>
+        <member name="M:CPS.CPS_StaticRequest.getRequestXML(System.String,System.Collections.Generic.List{System.String},System.Collections.Generic.Dictionary{System.String,System.String},System.Boolean)">
+            <summary>
+            Gets current request to XML string.
+            </summary>
+            <param name="docRootXpath">Ignored parameter, just for method signature purposes.</param>
+            <param name="docIdXpath">Ignored parameter, just for method signature purposes.</param>
+            <param name="envelopeParams">Ignored parameter, just for method signature purposes.</param>
+            <param name="resetDocIds">Ignored parameter, just for method signature purposes.</param>
+            <returns>Request as XML string.</returns>
+        </member>
+        <member name="F:CPS.CPS_StaticRequest.p_renderedXml">
+            <summary>
+            Full XML request.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_SimpleXML">
+            <summary>
+            CPS SimpleXML class provides simple way to get XML values, very similar to PHP's SimpleXML class.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.#ctor(System.Xml.XmlElement)">
+            <summary>
+            Creates new CPS SimpleXML class instance from passed XmlElement instance.
+            </summary>
+            <param name="element">XmlElement class instance.</param>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetName">
+            <summary>
+            Gets current tag name.
+            </summary>
+            <returns>Tag name.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetString(System.Int32)">
+            <summary>
+            Gets current tag value as string.
+            </summary>
+            <param name="seqno">For multiple tags only, tag number.</param>
+            <returns>String value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetCData(System.Int32)">
+            <summary>
+            Get current tag's CDATA contents.
+            </summary>
+            <param name="seqno">For multiple tags only, tag number.</param>
+            <returns>String value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.op_Implicit(CPS.CPS_SimpleXML)~System.String">
+            <summary>
+            Gets current tag value as string.
+            </summary>
+            <param name="sxml">CPS_SimpleXML class instance.</param>
+            <returns>String value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetInt(System.Int32)">
+            <summary>
+            Gets current tag value as integer.
+            </summary>
+            <param name="seqno">For multiple tags only, tag number.</param>
+            <returns>Integer value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.op_Implicit(CPS.CPS_SimpleXML)~System.Int32">
+            <summary>
+            Gets current tag value as integer.
+            </summary>
+            <param name="sxml">CPS_SimpleXML class instance.</param>
+            <returns>Integer value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetFloat(System.Int32)">
+            <summary>
+            Gets current tag value as float.
+            </summary>
+            <param name="seqno">For multiple tags only, tag number.</param>
+            <returns>Float value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.op_Implicit(CPS.CPS_SimpleXML)~System.Single">
+            <summary>
+            Gets current tag value as float.
+            </summary>
+            <param name="sxml">CPS_SimpleXML class instance.</param>
+            <returns>Float value.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.GetChild(System.String,System.Int32)">
+            <summary>
+            Gets child element by tag name and (in case of multiple tags) tag number.
+            </summary>
+            <param name="name">Child name.</param>
+            <param name="seqno">Tag number.</param>
+            <returns>Child CPS_SimpleXML element.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.ConvertToXML(System.Xml.XmlElement)">
+            <summary>
+            Converts current CPS_SimpleXML instance to XmlElement instance.
+            </summary>
+            <param name="parent">Parent XmlElement instance.</param>
+            <returns>New XmlElement instance.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.ConvertToXML">
+            <summary>
+            Converts current CPS_SimpleXML instance to XmlElement instance.
+            </summary>
+            <returns>New XmlElement instance.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.Spaces(System.Int32)">
+            <summary>
+            Generates string with spaces.
+            </summary>
+            <param name="spaces">Number of spaces to generate.</param>
+            <returns>String with spaces.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.Dump(System.Int32)">
+            <summary>
+            Dumps CPS_SimpleXML content and structure, very similar to PHP's print_r() function, very usefull for debugging purposes.
+            Output is recomended to view using fixed-width font, for example Courier New.
+            </summary>
+            <param name="spaces">Number of identing spaces.</param>
+            <returns>Dumped structure.</returns>
+        </member>
+        <member name="M:CPS.CPS_SimpleXML.Dump">
+            <summary>
+            Dumps CPS_SimpleXML content and structure, very similar to PHP's print_r() function, very usefull for debugging purposes.
+            Output is recomended to view using fixed-width font, for example Courier New.
+            </summary>
+            <returns>Dumped structure.</returns>
+        </member>
+        <member name="F:CPS.CPS_SimpleXML.p_name">
+            <summary>
+            Tag name.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_SimpleXML.p_values">
+            <summary>
+            Tag values.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_SimpleXML.p_childs">
+            <summary>
+            Tag child elements.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_SimpleXML.p_cdata">
+            <summary>
+            CDATA values.
+            </summary>
+        </member>
+        <member name="P:CPS.CPS_SimpleXML.Item(System.String,System.Int32)">
+            <summary>
+            Gets child element by tag name and (in case of multiple tags) tag number.
+            </summary>
+            <param name="name">Child name.</param>
+            <param name="seqno">Tag number.</param>
+            <returns>Child CPS_SimpleXML element.</returns>
+        </member>
+        <member name="T:CPS.Protobuf_Streamer">
+            <summary>
+            System Stream wrapper for reading and writing Google Protobuf encoded data.
+            </summary>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.#ctor(System.IO.Stream)">
+            <summary>
+            Creates new Protobuf_Stream class instance.
+            </summary>
+            <param name="strm">Stream to use for reading and writing.</param>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.ReadVarint">
+            <summary>
+            Reads one Varint from stream.
+            </summary>
+            <returns>Decoded Varint.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.ReadBytes(System.Int32)">
+            <summary>
+            Reads fixed number of bytes from stream.
+            </summary>
+            <param name="size">Number of bytes to read.</param>
+            <returns>Byte array of read data.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.WriteVarint(System.Int64)">
+            <summary>
+            Writes one Varint to stream.
+            </summary>
+            <param name="value">Varint to write.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.WriteBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes fixed number of bytes to stream.
+            </summary>
+            <param name="data">Byte array to write.</param>
+            <param name="size">Number of bytes to write.</param>
+            <param name="offset">Start offset in byte array.</param>
+            <returns>Number of bytes written.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Streamer.GetStream">
+            <summary>
+            Gets wrapped stream.
+            </summary>
+            <returns>Stream.</returns>
+        </member>
+        <member name="F:CPS.Protobuf_Streamer.p_strm">
+            <summary>
+            Used stream.
+            </summary>
+        </member>
+        <member name="T:CPS.Protobuf_Field">
+            <summary>
+            Google Protobuf field class. Used internally and not available outside library.
+            </summary>
+        </member>
+        <member name="M:CPS.Protobuf_Field.#ctor(System.UInt16,CPS.Protobuf.WireType,System.Byte[])">
+            <summary>
+            Creates new Protobuf_Field class instance from passed parameters.
+            </summary>
+            <param name="fn">Field number.</param>
+            <param name="wt">Wire type.</param>
+            <param name="data">Raw data.</param>
+        </member>
+        <member name="M:CPS.Protobuf_Field.#ctor(CPS.Protobuf_Streamer)">
+            <summary>
+            Creates new Protobuf_Field class instance by reading and decoding it from Protobuf_Streamer.
+            </summary>
+            <param name="streamer">Protobuf_Streamer for reading.</param>
+        </member>
+        <member name="M:CPS.Protobuf_Field.GetWireType">
+            <summary>
+            Gets field's write type.
+            </summary>
+            <returns>Write type.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Field.GetFieldNumber">
+            <summary>
+            Gets field's field number.
+            </summary>
+            <returns>Field number.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Field.GetData">
+            <summary>
+            Gets field's raw data.
+            </summary>
+            <returns>Raw data.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Field.GetIData">
+            <summary>
+            Gets field's data, if value is Varint.
+            </summary>
+            <returns>Varint.</returns>
+        </member>
+        <member name="M:CPS.Protobuf_Field.WriteToStream(CPS.Protobuf_Streamer)">
+            <summary>
+            Writes field to Protobuf_Streamer.
+            </summary>
+            <param name="streamer">Protobuf_Streamer for writing field to.</param>
+        </member>
+        <member name="F:CPS.Protobuf_Field.p_fn">
+            <summary>
+            Field number.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf_Field.p_wt">
+            <summary>
+            Write type.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf_Field.p_data">
+            <summary>
+            Raw data.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf_Field.p_idata">
+            <summary>
+            Varint data.
+            </summary>
+        </member>
+        <member name="T:CPS.Protobuf">
+            <summary>
+            Very simple Google Protobuf API class. For CPS library we do not need complete Protobuf package, this simple implementation is enough.
+            </summary>
+        </member>
+        <member name="M:CPS.Protobuf.#ctor">
+            <summary>
+            Creates new Protobuf class instance with no fields.
+            </summary>
+        </member>
+        <member name="M:CPS.Protobuf.#ctor(CPS.Protobuf_Streamer)">
+            <summary>
+            Creates new Protobuf class instance by reading it from Protobuf_Streamer.
+            </summary>
+            <param name="streamer">Protobuf_Streamer used for reading.</param>
+        </member>
+        <member name="M:CPS.Protobuf.CreateField(System.UInt16,CPS.Protobuf.WireType,System.Byte[])">
+            <summary>
+            Creates new Protobuf field from given data.
+            </summary>
+            <param name="fn">Field number.</param>
+            <param name="wt">Wire type.</param>
+            <param name="data">Raw data.</param>
+        </member>
+        <member name="M:CPS.Protobuf.CreateStringField(System.UInt16,System.String)">
+            <summary>
+            Creates new Protobuf string field from given data.
+            </summary>
+            <param name="fn">Field number.</param>
+            <param name="data">String data.</param>
+        </member>
+        <member name="M:CPS.Protobuf.CreateFixed64Field(System.UInt16,System.UInt64)">
+            <summary>
+            Creates new Protobuf fixed64 field from given data.
+            </summary>
+            <param name="fn">Field number.</param>
+            <param name="value">64-bit integer.</param>
+        </member>
+        <member name="M:CPS.Protobuf.GetFieldWireType(System.UInt16)">
+            <summary>
+            Gets field's wire type by field number.
+            </summary>
+            <param name="fn">Field number.</param>
+            <returns>Field's wire type.</returns>
+        </member>
+        <member name="M:CPS.Protobuf.GetField(System.UInt16)">
+            <summary>
+            Gets field's raw data by field number.
+            </summary>
+            <param name="fn">Field number.</param>
+            <returns>Byte array.</returns>
+        </member>
+        <member name="M:CPS.Protobuf.GetStringField(System.UInt16)">
+            <summary>
+            Gets field's data as string by field number.
+            </summary>
+            <param name="fn">Field number.</param>
+            <returns>String data.</returns>
+        </member>
+        <member name="M:CPS.Protobuf.WriteToStream(CPS.Protobuf_Streamer)">
+            <summary>
+            Writes whole Protobuf to Protobuf_Streamer.
+            </summary>
+            <param name="streamer">Protobuf_Streamer for writing.</param>
+        </member>
+        <member name="F:CPS.Protobuf.p_fields">
+            <summary>
+            Protobuf fields.
+            </summary>
+        </member>
+        <member name="T:CPS.Protobuf.WireType">
+            <summary>
+            Google Protobuf field's wire type.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.Varint">
+            <summary>
+            Varint (variable size integer).
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.Fixed64bit">
+            <summary>
+            Fixed 64bit.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.LengthDelimited">
+            <summary>
+            Length-delimited field, for example string.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.StartGroup">
+            <summary>
+            Start Group marker - deprecated.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.EndGroup">
+            <summary>
+            End Group marker - deprecated.
+            </summary>
+        </member>
+        <member name="F:CPS.Protobuf.WireType.Fixed32bit">
+            <summary>
+            Fixed 32bit.
+            </summary>
+        </member>
+        <member name="T:CPS.CPS_Simple">
+            <summary>
+            The CPS_Simple class contains methods suitable for most requests that don't require advanced parameters to be specified.
+            </summary>
+        </member>
+        <member name="M:CPS.CPS_Simple.#ctor(CPS.CPS_Connection)">
+            <summary>
+            Creates new CPS_Simple class instance.
+            </summary>
+            <param name="connection">CPS_Connection class instance.</param>
+        </member>
+        <member name="M:CPS.CPS_Simple.search(System.String,System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.String,System.String},System.String,CPS.CPS_Response.DOC_TYPE,System.String)">
+            <summary>
+            Performs a search command. Returns the documents found in a Dictionary with document IDs as keys and document contents as values. Returned document type depends on returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="query">Query string. See <see cref="M:CPS.CPS_SearchRequest.setQuery(System.String)"/> for more info on best practices.</param>
+            <param name="offset">Number of documents to skip before including them in results.</param>
+            <param name="docs">Maximum document count to return.</param>
+            <param name="list">Dictionary with tag xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="ordering">Single ordering rule. You can use <see cref="T:CPS.Utils"/> class function to generate this rule.</param>
+            <param name="returnType">Defines used return type.</param>
+            <param name="stemLang">Defines temming language.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.search(System.String,System.Int32,System.Int32,System.Collections.Generic.Dictionary{System.String,System.String},System.Collections.Generic.List{System.String},CPS.CPS_Response.DOC_TYPE,System.String)">
+            <summary>
+            Performs a search command. Returns the documents found in a Dictionary with document IDs as keys and document contents as values. Returned document type depends on returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="query">Query string. See <see cref="M:CPS.CPS_SearchRequest.setQuery(System.String)"/> for more info on best practices.</param>
+            <param name="offset">Number of documents to skip before including them in results.</param>
+            <param name="docs">Maximum document count to return.</param>
+            <param name="list">Dictionary with tag xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="ordering">Multiple ordering rules. You can use <see cref="T:CPS.Utils"/> class function to generate these rules.</param>
+            <param name="returnType">Defines used return type.</param>
+            <param name="stemLang">Defines temming language.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.sql_search(System.String,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Performs a search command with SQL query. Returns the documents found in a Dictionary with document IDs as keys and document contents as values. Returned document type depends on returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="sql_query">The SQL query string.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.insertSingle(System.String,System.Object)">
+            <summary>
+            Inserts single document into Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document as CPS_SimpleXML or XmlElement object.</param>
+            <returns>List of document IDs inserted.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.insertMultiple(System.Object)">
+            <summary>
+            Inserts multiple documents into Clusterpoint Server storage.
+            </summary>
+            <param name="documents">Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt; where key is document ID.</param>
+            <returns>List of document IDs inserted.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.updateSingle(System.String,System.Object)">
+            <summary>
+            Updates single document in Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document as CPS_SimpleXML or XmlElement object.</param>
+            <returns>List of document IDs updated.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.updateMultiple(System.Object)">
+            <summary>
+            Updates multiple documents in Clusterpoint Server storage.
+            </summary>
+            <param name="documents">Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt; where key is document ID.</param>
+            <returns>List of document IDs updated.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.replaceSingle(System.String,System.Object)">
+            <summary>
+            Replaces single document in Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document as CPS_SimpleXML or XmlElement object.</param>
+            <returns>List of document IDs replaced.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.replaceMultiple(System.Object)">
+            <summary>
+            Replaces multiple documents in Clusterpoint Server storage.
+            </summary>
+            <param name="documents">Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt; where key is document ID.</param>
+            <returns>List of document IDs replaced.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialReplaceSingle(System.String,System.Object)">
+            <summary>
+            Partially replaces single document in Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="document">Document as CPS_SimpleXML or XmlElement object.</param>
+            <returns>List of document IDs partial-replace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialReplaceMultiple(System.Object)">
+            <summary>
+            Partially replaces multiple document in Clusterpoint Server storage.
+            </summary>
+            <param name="documents">Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt; where key is document ID.</param>
+            <returns>List of document IDs partial-replace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialXReplace(System.String,CPS.CPS_PRX_Operation)">
+            <summary>
+            Performs a partial-xreplace command in Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operation">Operation as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <returns>List of document IDs partial-xreplace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialXReplace(System.Collections.Generic.List{System.String},CPS.CPS_PRX_Operation)">
+            <summary>
+            Performs a partial-xreplace command in Clusterpoint Server storage.
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operation">Operation as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <returns>List of document IDs partial-xreplace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialXReplace(System.String,System.Collections.Generic.List{CPS.CPS_PRX_Operation})">
+            <summary>
+            Performs a partial-xreplace command in Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="operations">List of operations as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <returns>List of document IDs partial-xreplace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.partialXReplace(System.Collections.Generic.List{System.String},System.Collections.Generic.List{CPS.CPS_PRX_Operation})">
+            <summary>
+            Performs a partial-xreplace command in Clusterpoint Server storage.
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="operations">List of operations as <see cref="T:CPS.CPS_PRX_Operation"/> to perform.</param>
+            <returns>List of document IDs partial-xreplace'd.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.delete(System.String)">
+            <summary>
+            Deletes single document from Clusterpoint Server storage.
+            </summary>
+            <param name="id">Document ID.</param>
+            <returns>List of document IDs deleted.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.delete(System.Collections.Generic.List{System.String})">
+            <summary>
+            Deletes multiple documents from Clusterpoint Server storage.
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <returns>List of document IDs deleted.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listLast(System.Collections.Generic.Dictionary{System.String,System.String},System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Performs list-last command. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="offset">Defines number of document to skip before including in search results.</param>
+            <param name="docs">Defines number of documents to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listFirst(System.Collections.Generic.Dictionary{System.String,System.String},System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Performs list-first command. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="list">Dictionary of xpaths as keys and list options (yes | no | snippet | highlight) as values.</param>
+            <param name="offset">Defines number of document to skip before including in search results.</param>
+            <param name="docs">Defines number of documents to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.retrieveLast(System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Performs retrieve-last command. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="offset">Defines number of document to skip before including in search results.</param>
+            <param name="docs">Defines number of documents to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.retrieveFirst(System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Performs retrieve-first command. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="offset">Defines number of document to skip before including in search results.</param>
+            <param name="docs">Defines number of documents to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.retrieveSingle(System.String,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Retrieves single document from Clusterpoint Server storage. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns CPS_SimpleXML.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns XmlElement.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Document as CPS_SimpleXml or XmlElement.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.retrieveMultiple(System.Collections.Generic.List{System.String},CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Retrieves multiple documents from Clusterpoint Server storage. returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.lookupSingle(System.String,System.Collections.Generic.Dictionary{System.String,System.String},CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Lookups single document in Clusterpoint Server storage. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns CPS_SimpleXML.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns XmlElement.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="list">Dictionary with keys as xpaths and values as listing options (yes | no | snippet | highlight).</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Document as CPS_SimpleXml or XmlElement.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.lookupMultiple(System.Collections.Generic.List{System.String},System.Collections.Generic.Dictionary{System.String,System.String},CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Lookups multiple documents in Clusterpoint Server storage. returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="ids">List of document IDs.</param>
+            <param name="list">Dictionary with keys as xpaths and values as listing options (yes | no | snippet | highlight).</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listWords(System.String)">
+            <summary>
+            Performs list-words command by a given wildcard.
+            </summary>
+            <param name="wildcard">Words wildcard.</param>
+            <returns>Dictionary of listed words.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.alternatives(System.String,System.Single,System.Single,System.Single)">
+            <summary>
+            Performs alternatives command for given query. Returns most probable query (could be identical to given one).
+            </summary>
+            <param name="query">Search query.</param>
+            <param name="cr">Parameter 'cr'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <param name="idif">Parameter 'idif'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <param name="h">Parameter 'cr'. Please see <see href="http://www.clusterpoint.com/wiki/XML_Alternatives">Clusterpoint Wiki</see> for detailed description.</param>
+            <returns>Alternative query.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.status">
+            <summary>
+            Performs status command.
+            </summary>
+            <returns>Status information.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.searchDelete(System.String)">
+            <summary>
+            Performs search-delete command.
+            </summary>
+            <param name="query">Search query.</param>
+            <returns>Number of documents deleted.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listPaths">
+            <summary>
+            Performs list-paths command.
+            </summary>
+            <returns>List of available paths.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listFacets(System.String)">
+            <summary>
+            Performs list-facets command for single facet path.
+            </summary>
+            <param name="path">Facet path.</param>
+            <returns>List of available facets.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.listFacets(System.Collections.Generic.List{System.String})">
+            <summary>
+            Performs list-facets command for multiple facet paths.
+            </summary>
+            <param name="paths">Facet paths.</param>
+            <returns>List of available facets.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.similarDocument(System.String,System.Int32,System.Int32,System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE,System.String)">
+            <summary>
+            Searches for similar documents by given document ID. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="docid">Document ID to search similar documents to.</param>
+            <param name="len">Number of keywords to extract.</param>
+            <param name="quota">Minimum number of keywords to match.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <param name="query">Additional filtering query.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.similarText(System.String,System.Int32,System.Int32,System.Int32,System.Int32,CPS.CPS_Response.DOC_TYPE,System.String)">
+            <summary>
+            Searches for similar documents by given text. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="text">Text to search similar documents to.</param>
+            <param name="len">Number of keywords to extract.</param>
+            <param name="quota">Minimum number of keywords to match.</param>
+            <param name="offset">Number of document to skip before including them in response.</param>
+            <param name="docs">Number of document to return.</param>
+            <param name="returnType">Defines used return type.</param>
+            <param name="query">Additional filtering query.</param>
+            <returns>Documents as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.showHistory(System.String,System.Boolean,CPS.CPS_Response.DOC_TYPE)">
+            <summary>
+            Retrieves modification history of the document by revision ID. Returned type depends on passed returnType parameter.
+            If returnType is DOC_TYPE_SIMPLEXML, returns Dictionary&lt;string, CPS_SimpleXML&gt;.
+            If returnType is DOC_TYPE_ARRAY, returns null - not supported yet.
+            If returnType is DOC_TYPE_STDCLASS, returns Dictionary&lt;string, XmlElement&gt;.
+            </summary>
+            <param name="id">Document ID.</param>
+            <param name="returnDocs">Set to true to return document content (subject to license conditions).</param>
+            <param name="returnType">Defines used return type.</param>
+            <returns>Revisions as Dictionary&lt;string, CPS_SimpleXML&gt; or Dictionary&lt;string, XmlElement&gt;.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.beginTransaction">
+            <summary>
+            Begins new transaction.
+            </summary>
+            <returns>Always true, in case of error throws exception.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.commitTransaction">
+            <summary>
+            Commits last transaction.
+            </summary>
+            <returns>Always true, in case of error throws exception.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.rollbackTransaction">
+            <summary>
+            Rollbacks last transaction.
+            </summary>
+            <returns>Always true, in case of error throws exception.</returns>
+        </member>
+        <member name="M:CPS.CPS_Simple.getLastResponse">
+            <summary>
+            Gets last received response. This could be useful if you need extra information from the response object.
+            <seealso cref="T:CPS.CPS_Response"/>
+            </summary>
+            <returns>Last received response.</returns>
+        </member>
+        <member name="F:CPS.CPS_Simple.p_connection">
+            <summary>
+            Clusterpoint Server connection.
+            </summary>
+        </member>
+        <member name="F:CPS.CPS_Simple.p_lastResponse">
+            <summary>
+            Last received response.
+            </summary>
+        </member>
+    </members>
+</doc>
